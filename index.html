@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Free Virtual Staging | AI Virtual Staging for Real Estate Photos</title>
+<meta name="description" content="Free virtual staging for real estate photos using AI. Upload empty room photos, choose a style, get staged photos in minutes. No signup, no installation. Bring your own OpenAI API key.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="Free Virtual Staging - AI Virtual Staging for Real Estate">
+<meta property="og:description" content="Upload empty room photos, choose a furniture style, get AI-staged photos. Free, no signup, runs in your browser.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4EFE6;
+  --surface: #FFFFFF;
+  --ink: #1A1815;
+  --muted: #6B6760;
+  --line: #E0D8CB;
+  --accent: #B8442A;
+  --accent-dark: #8F341F;
+  --success: #2D5F3F;
+  --error: #A03333;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ─── Header ─── */
+header {
+  padding: 32px 0 16px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 64px;
+}
+.logo {
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.logo span {
+  color: var(--accent);
+}
+.tagline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+/* ─── Hero ─── */
+.hero {
+  margin-bottom: 80px;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-size: clamp(48px, 8vw, 88px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+}
+.hero h1 .italic {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent);
+}
+.hero p.lead {
+  font-size: 19px;
+  color: var(--muted);
+  max-width: 580px;
+  line-height: 1.5;
+}
+.hero .badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  background: rgba(184, 68, 42, 0.08);
+  padding: 6px 12px;
+  border-radius: 100px;
+  margin-bottom: 24px;
+}
+
+/* ─── Section structure ─── */
+section {
+  margin-bottom: 56px;
+}
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 8px;
+}
+h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+/* ─── Form elements ─── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 28px;
+  margin-bottom: 16px;
+}
+label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+input[type="password"],
+input[type="text"],
+select {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  transition: border-color 0.15s, background 0.15s;
+}
+input[type="password"]:focus,
+input[type="text"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--surface);
+}
+.field-help {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.field-help a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 600px) {
+  .field-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Upload zone ─── */
+.upload-zone {
+  border: 2px dashed var(--line);
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.upload-zone:hover,
+.upload-zone.dragging {
+  border-color: var(--accent);
+  background: rgba(184, 68, 42, 0.03);
+}
+.upload-icon {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  color: var(--accent);
+  font-weight: 700;
+  font-style: italic;
+  display: block;
+  margin-bottom: 12px;
+}
+.upload-zone p {
+  font-size: 15px;
+  color: var(--muted);
+}
+.upload-zone strong {
+  color: var(--ink);
+}
+#fileInput { display: none; }
+
+.file-list {
+  margin-top: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+}
+.file-list-item {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+.file-list-item:last-child { border-bottom: none; }
+
+/* ─── Button ─── */
+.stage-button {
+  width: 100%;
+  padding: 18px 24px;
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+  margin-top: 16px;
+}
+.stage-button:hover:not(:disabled) {
+  background: var(--accent);
+}
+.stage-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.stage-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cost-estimate {
+  text-align: center;
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ─── Progress ─── */
+.progress-card {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 28px;
+  margin-top: 24px;
+}
+.progress-card.active { display: block; }
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+.progress-title {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+.progress-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+}
+.progress-bar {
+  height: 4px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  width: 0%;
+}
+.progress-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+/* ─── Results ─── */
+.results {
+  display: none;
+  margin-top: 48px;
+}
+.results.active { display: block; }
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.result-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  background: var(--bg);
+}
+.result-card.failed img {
+  display: none;
+}
+.result-meta {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--line);
+}
+.result-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+.download-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 6px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.download-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+.failed-msg {
+  padding: 16px;
+  color: var(--error);
+  font-size: 13px;
+  background: rgba(160, 51, 51, 0.05);
+}
+
+/* ─── Info section ─── */
+.info-section {
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  margin-top: 80px;
+  padding: 80px 0;
+}
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 48px;
+  margin-top: 32px;
+}
+.info-block h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.info-block p {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.callout {
+  background: var(--bg);
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 32px 0;
+  border-radius: 0 6px 6px 0;
+}
+.callout p {
+  font-size: 15px;
+}
+.callout strong {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 600;
+}
+.callout a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ─── Footer ─── */
+footer {
+  padding: 48px 0;
+  border-top: 1px solid var(--line);
+  margin-top: 80px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+footer a:hover {
+  border-bottom-color: var(--accent);
+}
+
+.error-banner {
+  background: rgba(160, 51, 51, 0.08);
+  border: 1px solid rgba(160, 51, 51, 0.3);
+  color: var(--error);
+  padding: 16px 20px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: none;
+}
+.error-banner.active { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">Free Virtual <span>Staging</span></div>
+    <div class="tagline">AI staging · No install · Bring your own API key</div>
+  </div>
+</header>
+
+<div class="container">
+
+<section class="hero">
+  <div class="badge">Free · No signup · Open source</div>
+  <h1>Free virtual<br>staging, <span class="italic">in your browser.</span></h1>
+  <p class="lead">Upload empty room photos. Pick a furniture style. Get AI-staged photos in minutes. Runs entirely in your browser using your own OpenAI API key.</p>
+</section>
+
+<section>
+  <span class="section-num">01 / API Key</span>
+  <h2>Add your OpenAI key</h2>
+  <div class="card">
+    <label for="apiKey">OpenAI API Key</label>
+    <input type="password" id="apiKey" placeholder="sk-..." autocomplete="off">
+    <p class="field-help">Your key stays in your browser. It's only sent to OpenAI, never to us. <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">Get a key →</a></p>
+  </div>
+</section>
+
+<section>
+  <span class="section-num">02 / Configuration</span>
+  <h2>Pick a style and room</h2>
+  <div class="card">
+    <div class="field-grid">
+      <div>
+        <label for="style">Furniture Style</label>
+        <select id="style">
+          <option value="modern">Modern</option>
+          <option value="scandinavian">Scandinavian</option>
+          <option value="transitional" selected>Transitional</option>
+          <option value="farmhouse">Modern Farmhouse</option>
+          <option value="coastal">Coastal</option>
+          <option value="industrial">Urban Industrial</option>
+          <option value="traditional">Traditional</option>
+          <option value="rustic">Rustic</option>
+          <option value="midcentury">Mid-Century Modern</option>
+        </select>
+      </div>
+      <div>
+        <label for="room">Room Type</label>
+        <select id="room">
+          <option value="living" selected>Living Room</option>
+          <option value="bedroom">Bedroom</option>
+          <option value="dining">Dining Room</option>
+          <option value="kitchen">Kitchen</option>
+          <option value="office">Office</option>
+          <option value="outdoor">Outdoor / Patio</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="section-num">03 / Upload</span>
+  <h2>Add your photos</h2>
+  <div class="error-banner" id="errorBanner"></div>
+  <div class="upload-zone" id="uploadZone">
+    <span class="upload-icon">+</span>
+    <p><strong>Click to upload</strong> or drag and drop</p>
+    <p style="margin-top: 6px; font-size: 13px;">JPG, PNG, WebP · up to 25 photos per batch</p>
+    <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp">
+    <div class="file-list" id="fileList"></div>
+  </div>
+</section>
+
+<section>
+  <button class="stage-button" id="stageButton" disabled>Stage Photos</button>
+  <div class="cost-estimate" id="costEstimate">~$0.19 per photo at OpenAI rates · verify at openai.com/api/pricing</div>
+</section>
+
+<div class="progress-card" id="progressCard">
+  <div class="progress-header">
+    <div class="progress-title">Staging in progress</div>
+    <div class="progress-count" id="progressCount">0 / 0</div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-status" id="progressStatus">Initializing...</div>
+</div>
+
+<section class="results" id="results">
+  <div class="results-header">
+    <h2>Your staged photos</h2>
+  </div>
+  <div class="results-grid" id="resultsGrid"></div>
+</section>
+
+<div class="callout">
+  <p><strong>Need production-quality staging?</strong> AI staging is great for testing and quick previews, but the output is variable. For active MLS listings where photo quality matters, use a designer-led service like <a href="https://www.virtualstaging.com" target="_blank" rel="noopener">VirtualStaging.com</a> (4 to 8 hour turnaround, $19 to $24 per photo, money-back guarantee).</p>
+</div>
+
+</div>
+
+<div class="info-section">
+  <div class="container">
+    <span class="section-num">About this tool</span>
+    <h2>What is free virtual staging?</h2>
+    <p style="max-width: 620px; color: var(--muted); font-size: 17px; line-height: 1.6; margin-top: 12px;">Virtual staging is the practice of digitally adding furniture and decor to property photos. Traditional services charge $20 to $200 per photo and take hours to days. This tool uses OpenAI's <code>gpt-image-2</code> model to do the same thing in your browser, free, using your own API key.</p>
+
+    <div class="info-grid">
+      <div class="info-block">
+        <h3>Bring your own key</h3>
+        <p>Pay OpenAI directly at their published rates (~$0.19 per photo at high quality). No middleman, no markup, no subscription. Your API key stays in your browser.</p>
+      </div>
+      <div class="info-block">
+        <h3>9 furniture styles</h3>
+        <p>Modern, Scandinavian, Transitional, Farmhouse, Coastal, Industrial, Traditional, Rustic, Mid-Century Modern. Each one tuned for real estate photo staging.</p>
+      </div>
+      <div class="info-block">
+        <h3>Bulk processing</h3>
+        <p>Upload up to 25 photos at once. Stage a full listing in one batch. Download each result individually as a PNG.</p>
+      </div>
+      <div class="info-block">
+        <h3>No data leaves your browser</h3>
+        <p>Photos go directly from your browser to OpenAI. Nothing is stored on a server. Close the tab and everything is gone except your downloaded files.</p>
+      </div>
+      <div class="info-block">
+        <h3>Honest about limitations</h3>
+        <p>AI image editing is impressive but variable. Some photos will look great. Some will need re-runs. For MLS-ready output, use a designer-led service.</p>
+      </div>
+      <div class="info-block">
+        <h3>Open source on GitHub</h3>
+        <p>This whole tool is one HTML file. Inspect it, fork it, modify it, host your own copy. <a href="https://github.com" style="color: var(--accent); text-decoration: underline;">View on GitHub →</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    Free Virtual Staging · Built on top of OpenAI's gpt-image-2<br>
+    Production-grade staging available at <a href="https://www.virtualstaging.com">VirtualStaging.com</a>
+  </div>
+</footer>
+
+<script>
+// ─── Style prompts ───
+const STYLES = {
+  modern: "modern minimalist furniture with clean lines, neutral palette, contemporary design",
+  scandinavian: "Scandinavian style with light woods, white textiles, plants, cozy minimalism",
+  transitional: "transitional style blending traditional and modern, neutral palette, broad appeal",
+  farmhouse: "modern farmhouse with white shiplap, soft woods, country touches",
+  coastal: "coastal style with blues, whites, beige, woven natural textures",
+  industrial: "urban industrial with exposed metal, dark woods, brick, leather",
+  traditional: "traditional with classic warm woods, formal layouts, refined details",
+  rustic: "rustic with reclaimed wood, leather, exposed beams, earth tones",
+  midcentury: "mid-century modern with walnut, brass, geometric patterns, tapered legs",
+};
+
+const ROOM_PROMPTS = {
+  bedroom: "Add {style} furniture. Include a bed with bedding, two nightstands with lamps, an area rug, and tasteful wall art above the bed.",
+  living: "Add {style} furniture. Include a sofa, coffee table, one or two armchairs, side tables with lamps, an area rug, and wall art.",
+  dining: "Add {style} furniture. Include a dining table with six chairs, a pendant light fixture above the table, and a sideboard.",
+  kitchen: "Add {style} accents. Include bar stools at any visible counter or island, decorative kitchenware, and styled accessories.",
+  office: "Add {style} furniture. Include a desk with a chair, bookshelves with books and decor, a desk lamp, and wall art.",
+  outdoor: "Add {style} outdoor furniture. Include patio chairs, an outdoor table, potted plants, throw pillows, and an outdoor rug.",
+};
+
+const PRESERVATION = " IMPORTANT: Preserve all architectural features exactly as shown in the original photo. Do not change walls, windows, doors, ceilings, floors, fixtures, or built-in features. Match the room's existing lighting direction and color temperature. Output should look like a photorealistic real estate listing photo.";
+
+// ─── State ───
+let selectedFiles = [];
+
+// ─── Elements ───
+const apiKeyInput = document.getElementById('apiKey');
+const styleSelect = document.getElementById('style');
+const roomSelect = document.getElementById('room');
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('fileList');
+const stageButton = document.getElementById('stageButton');
+const costEstimate = document.getElementById('costEstimate');
+const progressCard = document.getElementById('progressCard');
+const progressCount = document.getElementById('progressCount');
+const progressFill = document.getElementById('progressFill');
+const progressStatus = document.getElementById('progressStatus');
+const results = document.getElementById('results');
+const resultsGrid = document.getElementById('resultsGrid');
+const errorBanner = document.getElementById('errorBanner');
+
+// ─── Restore saved API key ───
+const savedKey = localStorage.getItem('openai_api_key');
+if (savedKey) apiKeyInput.value = savedKey;
+
+apiKeyInput.addEventListener('change', () => {
+  localStorage.setItem('openai_api_key', apiKeyInput.value);
+  updateButtonState();
+});
+apiKeyInput.addEventListener('input', updateButtonState);
+
+// ─── File upload handling ───
+uploadZone.addEventListener('click', () => fileInput.click());
+
+uploadZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  uploadZone.classList.add('dragging');
+});
+uploadZone.addEventListener('dragleave', () => {
+  uploadZone.classList.remove('dragging');
+});
+uploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragging');
+  handleFiles(Array.from(e.dataTransfer.files));
+});
+
+fileInput.addEventListener('change', (e) => {
+  handleFiles(Array.from(e.target.files));
+});
+
+function handleFiles(files) {
+  const validFiles = files.filter(f => /^image\/(jpeg|png|webp)$/.test(f.type));
+  if (validFiles.length === 0) {
+    showError('Please upload JPG, PNG, or WebP images.');
+    return;
+  }
+  if (validFiles.length > 25) {
+    selectedFiles = validFiles.slice(0, 25);
+    showError('Limited to 25 photos per batch. Using the first 25.');
+  } else {
+    selectedFiles = validFiles;
+    hideError();
+  }
+  renderFileList();
+  updateButtonState();
+}
+
+function renderFileList() {
+  if (selectedFiles.length === 0) {
+    fileList.innerHTML = '';
+    return;
+  }
+  fileList.innerHTML = '<div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line);"><strong>' + selectedFiles.length + ' file' + (selectedFiles.length > 1 ? 's' : '') + ' ready:</strong></div>' +
+    selectedFiles.map(f => `<div class="file-list-item">${f.name} <span style="color: var(--muted); font-size: 11px;">· ${(f.size / 1024 / 1024).toFixed(1)} MB</span></div>`).join('');
+  costEstimate.textContent = `Estimated cost: ~$${(selectedFiles.length * 0.19).toFixed(2)} (${selectedFiles.length} photo${selectedFiles.length > 1 ? 's' : ''} × $0.19) · verify at openai.com/api/pricing`;
+}
+
+function updateButtonState() {
+  const hasKey = apiKeyInput.value.trim().length > 10;
+  const hasFiles = selectedFiles.length > 0;
+  stageButton.disabled = !(hasKey && hasFiles);
+}
+
+function showError(msg) {
+  errorBanner.textContent = msg;
+  errorBanner.classList.add('active');
+}
+function hideError() {
+  errorBanner.classList.remove('active');
+}
+
+// ─── Build prompt ───
+function buildPrompt(roomType, styleKey) {
+  const styleDescription = STYLES[styleKey];
+  const roomTemplate = ROOM_PROMPTS[roomType];
+  return roomTemplate.replace('{style}', styleDescription) + PRESERVATION;
+}
+
+// ─── Stage one image via OpenAI API ───
+async function stageImage(apiKey, file, prompt) {
+  const formData = new FormData();
+  formData.append('model', 'gpt-image-2');
+  formData.append('image', file);
+  formData.append('prompt', prompt);
+  formData.append('size', '1024x1024');
+  formData.append('quality', 'high');
+
+  const response = await fetch('https://api.openai.com/v1/images/edits', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${apiKey}` },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    let errMsg = 'Request failed';
+    try {
+      const errData = JSON.parse(errText);
+      errMsg = errData.error?.message || errMsg;
+    } catch (_) {
+      errMsg = errText.slice(0, 200);
+    }
+    throw new Error(errMsg);
+  }
+
+  const data = await response.json();
+  return data.data[0].b64_json;
+}
+
+// ─── Render a result card ───
+function renderResult(file, success, dataOrError) {
+  const card = document.createElement('div');
+  card.className = 'result-card' + (success ? '' : ' failed');
+
+  if (success) {
+    const imgSrc = `data:image/png;base64,${dataOrError}`;
+    const downloadName = `staged_${file.name.replace(/\.[^.]+$/, '')}.png`;
+    card.innerHTML = `
+      <img src="${imgSrc}" alt="Staged ${file.name}">
+      <div class="result-meta">
+        <span class="result-name">${file.name}</span>
+        <a class="download-btn" href="${imgSrc}" download="${downloadName}">Download</a>
+      </div>
+    `;
+  } else {
+    card.innerHTML = `
+      <div class="failed-msg"><strong>Failed:</strong> ${file.name}<br>${dataOrError}</div>
+    `;
+  }
+  resultsGrid.appendChild(card);
+}
+
+// ─── Main staging flow ───
+stageButton.addEventListener('click', async () => {
+  const apiKey = apiKeyInput.value.trim();
+  if (!apiKey || selectedFiles.length === 0) return;
+
+  hideError();
+
+  const prompt = buildPrompt(roomSelect.value, styleSelect.value);
+  const total = selectedFiles.length;
+
+  // Reset UI
+  resultsGrid.innerHTML = '';
+  results.classList.remove('active');
+  progressCard.classList.add('active');
+  stageButton.disabled = true;
+  stageButton.textContent = 'Staging...';
+
+  let completed = 0;
+
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const file = selectedFiles[i];
+    progressCount.textContent = `${i + 1} / ${total}`;
+    progressStatus.textContent = `Staging ${file.name}...`;
+    progressFill.style.width = `${((i) / total) * 100}%`;
+
+    try {
+      const b64 = await stageImage(apiKey, file, prompt);
+      renderResult(file, true, b64);
+      completed++;
+    } catch (err) {
+      console.error(err);
+      renderResult(file, false, err.message);
+    }
+
+    progressFill.style.width = `${((i + 1) / total) * 100}%`;
+    results.classList.add('active');
+  }
+
+  // Done
+  progressStatus.textContent = `Done. ${completed} of ${total} photos staged successfully.`;
+  progressCount.textContent = `${completed} / ${total}`;
+  stageButton.disabled = false;
+  stageButton.textContent = 'Stage More Photos';
+
+  // Scroll to results
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+</script>
+</body>
+</html>
