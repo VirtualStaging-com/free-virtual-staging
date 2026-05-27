@@ -2,6 +2,8 @@
 
 > Free AI virtual staging for real estate photos. Runs entirely in your browser. No install, no signup, no Python. Bring your own OpenAI API key.
 
+**[Try it live →](https://YOUR_USERNAME.github.io/free-virtual-staging/)**
+
 Free virtual staging for real estate agents who want to test AI virtual staging without paying per photo. This is a single HTML file that runs in any modern browser. Upload empty room photos, choose a furniture style, get AI-staged photos back. Uses OpenAI's `gpt-image-2` model.
 
 ## How it works
